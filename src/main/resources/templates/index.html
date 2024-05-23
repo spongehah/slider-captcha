@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Slider Captcha Demo</title>
+    <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/slidercaptcha.min.css" rel="stylesheet"/>
+    <style>
+
+        html, body {
+            width: 100%;
+            /*height: 100%;*/
+            aspect-ratio: 6 / 5;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+<div id="captcha"></div>
+
+<script src="js/longbow.slidercaptcha.js"></script>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+<script>
+    var captcha = sliderCaptcha({
+        id: 'captcha',
+        width: 280,
+        height: 155,
+        sliderL: 42,
+        sliderR: 9,
+        offset: 5,
+        loadingText: '正在加载中...',
+        failedText: '再试一次',
+        barText: '向右滑动填充拼图',
+        repeatIcon: 'fa fa-redo',
+        remoteUrl: 'http://localhost:8080',
+        onSuccess: function () {  //成功事件
+            var handler = setTimeout(function () {
+                window.clearTimeout(handler);
+            }, 500);
+        },
+        onFail: function () {
+            var handler = setTimeout(function () {
+                window.clearTimeout(handler);
+            }, 500);
+        },
+        verify: function (startTime, endTime, left, trail, url) {
+            var result = false;
+            $.ajax({
+                url: url + "/verifyCode",
+                data: {
+                    startTime: startTime,
+                    endTime: endTime,
+                    left: left,
+                    trail: trail
+                },
+                async: false,
+                cache: false,
+                type: 'POST',
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: 'json',
+                success: function (response) {
+                    result = response;
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+            return result;
+        }
+    });
+</script>
+</body>
+
+</html>
