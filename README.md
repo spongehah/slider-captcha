@@ -108,3 +108,12 @@ _proto.initSliderCaptcha = function () {
     that.init(data);
 };
 ```
+
+
+## 优化思路
+现在每次请求都需要从静态文件读取一张背景图和一张滑块图，若并发量较高会造成IO使用率较高
+优化思路：
+设置三个成员变量：
+- 1.加载背景图片文件夹下的所有图片，一个数组，类型为BufferedImage
+- 2.加载滑块模板图片，类型为BufferedImage
+- 3.一个背景图片下标index，类型为int，index递增并对lenth取余，用次下标到背景图数组中取图，保证两次请求取出的图片不重复
